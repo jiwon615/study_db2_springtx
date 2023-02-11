@@ -12,6 +12,9 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * @Transactional을 통해 트랜잭션이 잘 적용되었는지 확인하는 테스트 코드
+ */
 @Slf4j
 @SpringBootTest
 public class TxBasicTest {
