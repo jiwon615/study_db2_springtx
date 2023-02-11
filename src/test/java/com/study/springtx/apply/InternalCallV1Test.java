@@ -10,40 +10,52 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 /**
- * @Transactional 붙여지는 위치에 따른 우선순위 확인
+ * 프록시 내부 호출 문제 확인
+ * - 대상 객체의 내부에서 메소드 호출이 발생하면 프록시를 거치지 않고 객체를 직접 호출하는 문제가 발생
  */
+@Slf4j
 @SpringBootTest
-public class TxLevelTest {
+public class InternalCallV1Test {
 
     @Autowired
-    LevelService service;
+    CallService callService;
 
     @Test
-    void orderTest() {
-        service.write();
-        service.read();
+    void printProxy() {
+        log.info("callService class={}", callService.getClass());
+    }
+
+    @Test
+    void internalCall() {
+        callService.internal();
+    }
+
+    @Test
+    void externalCall() {
+        callService.external();
     }
 
     @TestConfiguration
-    static class TxLevelTestConfig {
+    static class InternalCallV1TestConfig {
+
         @Bean
-        LevelService levelService() {
-            return new LevelService();
+        CallService callService() {
+            return new CallService();
         }
     }
 
     @Slf4j
-    @Transactional(readOnly = true)
-    static class LevelService {
+    static class CallService {
 
-        @Transactional
-        public void write() {
-            log.info("call write");
+        public void external() {
+            log.info("call external");
             printTxInfo();
+            internal();
         }
 
-        public void read() {
-            log.info("call read");
+        @Transactional
+        public void internal() {
+            log.info("call internal()");
             printTxInfo();
         }
 
