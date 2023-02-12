@@ -50,18 +50,21 @@ public class RollbackTest {
     @Slf4j
     static class RollbackService {
 
+        // 런타임 예외 발생 -> 롤백
         @Transactional
         public void runtimeException() {
             log.info("call runTimeException");
             throw new RuntimeException();
         }
 
+        // 체크 예외 발생 -> 커밋
         @Transactional
         public void checkedException() throws MyException {
             log.info("call checkedException");
             throw new MyException();
         }
 
+        // 체크 예외 rollbackFor 지정 -> 롤백
         @Transactional(rollbackFor = MyException.class)
         public void rollbackFor() throws MyException {
             log.info("call rollbackFor");
